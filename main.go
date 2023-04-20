@@ -28,6 +28,8 @@ func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
+	log.Println("Starting")
+
 	info := ServerInfo{}
 	ctx, stop := context.WithCancel(context.Background())
 	info.Ctx = ctx
@@ -67,12 +69,14 @@ func (server *ServerInfo) Reader(uri string) (Reader[[]byte], error) {
 		return Reader[[]byte]{}, WrongRoomError
 	}
 
+	log.Printf(path[1])
+
 	server.Lock()
 	defer server.Unlock()
-	log.Printf(path[1])
 	q, ok := server.Nmap[path[1]]
 	if !ok {
-		return Reader[[]byte]{}, RoomNotPresentError
+		q = NewQueue[[]byte]()
+		server.Nmap[path[1]] = q
 	}
 
 	return q.NewReader(), nil
