@@ -14,7 +14,26 @@ const sendmsg = async function(room, msg) {
   )
 }
 
+let urlParams = new URLSearchParams(window.location.search);
 const send = function () {
-  var room = document.getElementById('Room');
-  var msg = document.getElementById('Room');
+	let room = urlParams.get("room");
+  var msg = document.getElementById('msg');
+	sendmsg(room, msg.value);
+}
+
+const subscribeToRoom = function() {
+	let room = urlParams.get("room");
+	const es = new EventSource('http://localhost:8080/n/' + room);
+
+	const listener = function (event) {
+		var data = document.getElementById('data');
+		console.log(event)
+		data.innerText += event.data;
+	}
+
+	es.addEventListener('message', listener)
+}
+
+window.onload = function() {
+	subscribeToRoom();
 }

@@ -1,39 +1,10 @@
 <html>
-  <script defer>
-      const es = new EventSource('http://localhost:8080/n/TestRoom');
-      const listener = function (event) {
-        var data = document.getElementById('data');
-        console.log(event)
-        data.innerHTML = event.data;
-      }
-      es.addEventListener('message', listener)
-      const send = async function() {
-        data = {
-          "Room": "TestRoom",
-          "Msg" : "Hello",
-        }
-        await fetch('http://localhost:8080/s/', {
-          method: 'POST', // or 'PUT'
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-          }
-         )
-      }
-  </script>
+  <script src="sender.js"> </script>
   <body>
+		<button onclick="subscribeToRoom()"> Connect </button>
+		<label for="Msg"> Msg </label> <input id = "msg" name="Msg"> 
+    <button onclick="send()"> Send Notification </button>
+		<hr>
     <p id="data"> </p>
-    <form action="/s/">
-      <label for="Room"> Room </label>
-      <input name="Room"> 
-      <label for="Msg"> Msg </label>
-      <input name="Msg"> 
-      <input type="Submit" name="Submit">
-    </form>
-    <button onclick="send()">
-      Send Notification
-    </button>
   </body>
 </html>
